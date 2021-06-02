@@ -205,6 +205,11 @@ public class Pacman extends Creature {
 		if (f instanceof Food) {
 			Food food = (Food) f;
 			if (food.getFood() != null) {
+				food.setFood(null);
+				food.draw();
+				gameMap.pickFood();
+								
+				
 				/*
 				 * TODO Ici, il faut: - Changer le food en null (y a un setFood...) - Redessiner
 				 * le food (.draw()) - Et après, remettre à jour la map en updatant la bouffe

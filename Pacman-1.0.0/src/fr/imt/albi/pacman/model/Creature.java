@@ -122,6 +122,26 @@ abstract class Creature {
 		// direction choisie :)
 		if (direction.equals(PacManLauncher.UP) || direction.equals(PacManLauncher.DOWN)
 				|| direction.equals(PacManLauncher.LEFT) || direction.equals(PacManLauncher.RIGHT)) {
+			
+			
+			
+			if (direction.equals(PacManLauncher.UP) && (yPosition- speed - width/2 >=0)){ 
+				yMove=  this.checkCollision(PacManLauncher.UP,0,-speed)[1]; 
+				
+			}
+			
+			if(direction.equals(PacManLauncher.DOWN)  && (yPosition+ speed + width/2 <= heightMap)) {
+				yMove=  this.checkCollision(PacManLauncher.DOWN,0,speed)[1]; 
+			
+			}
+			
+			if(direction.equals(PacManLauncher.LEFT)  && (xPosition- speed- width/2 >=0)){
+				xMove= this.checkCollision(PacManLauncher.LEFT,-speed,0)[0]; 
+			}
+			if(direction.equals(PacManLauncher.RIGHT) && (xPosition+ speed+ width/2 <= widthMap)) {
+				xMove=  this.checkCollision(PacManLauncher.RIGHT,speed,0)[0]; 
+			}
+				
 		}
 
 		ret[0] = xMove;
