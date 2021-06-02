@@ -64,7 +64,8 @@ public class Pacman extends Creature {
 		// supplémentaire :)
 		if (this.getCurrentScore() >= this.nextLifeThreshold) {
 			this.currentLife ++;
-			this.nextLifeThreshold += LIFE_POINT_THRESHOLD;
+			this.nextLifeThreshold += LIFE_POINT_THRESHOLD; 
+		}
 	}
 	
 	public void updateScoreGhost() {
@@ -108,6 +109,23 @@ public class Pacman extends Creature {
 		int yMove = 0;
 
 		if (this.isMovePossible(direction)) {
+			
+			 xMove= this.navigateInMap(direction)[0];
+			 yMove= this.navigateInMap(direction)[1];
+			 
+			 xMove= this.checkCollision(direction, xMove, yMove)[0];
+			 yMove=this.checkCollision(direction, xMove, yMove)[1];
+			 
+			 this.move(xMove, yMove);
+			 
+			 this.lastMovement= direction;
+			 this.lastPosition= direction;
+			 
+			 this.animateMouth();
+			 
+		 }	
+			
+			
 			/*
 			 * TODO Si le déplacement est possible, il faut : - récupérer les nouvelles
 			 * coordonnées, - voir avec quoi on risque de se percuter avec ces nouvelles
@@ -116,7 +134,18 @@ public class Pacman extends Creature {
 			 * de classe pour ça) - Animer sa bouche ;)
 			 */
 	
-		} else {
+		else {
+			
+			 xMove= this.navigateInMap(this.lastMovement)[0];
+			 yMove= this.navigateInMap(this.lastMovement)[1];
+			
+			 xMove= this.checkCollision(this.lastMovement, xMove, yMove)[0];
+			 yMove=this.checkCollision(this.lastMovement, xMove, yMove)[1];
+			 
+			 this.move(xMove, yMove);
+			 
+			
+			 this.animateMouth();
 			/*
 			 * TODO Si le déplacement n'est possible, il faut pouvoir récupérer les
 			 * coordonnées en partant du principe que sa direction sera égale à la dernière
@@ -124,8 +153,8 @@ public class Pacman extends Creature {
 			 * direction qui sera utilisé, mais autre chose :) Faut toujours animer sa
 			 * bouche ceci dit !
 			 */
-		}
-	}
+		    }
+	     }
 
 	/**
 	 * Cette méthode permet de vérifier si le déplacement demandé est effectivement
@@ -134,46 +163,47 @@ public class Pacman extends Creature {
 	 * @param direction La direction choisie
 	 * @return true si possible, false sinon
 	 */
+	
 	private boolean isMovePossible(String direction) {
-		boolean canMove = false;
-		Figure[][] map = this.gameMap.getMap();
+        boolean canMove = false;
+        Figure[][] map = this.gameMap.getMap();
 
-		if (this.getX() % this.gameMap.getSizeCase() == 0 && this.getY() % this.gameMap.getSizeCase() == 0) {
-			int[] position = this.getColumnAndRow();
-			int xPosition = position[0];
-			int yPosition = position[1];
+        if (this.getX() % this.gameMap.getSizeCase() == 0 && this.getY() % this.gameMap.getSizeCase() == 0) {
+            int[] position = this.getColumnAndRow();
+            int xPosition = position[0];
+            int yPosition = position[1];
 
-			Figure fUp = map[yPosition - 1][xPosition];
-			Figure fDown = map[yPosition + 1][xPosition];
-			Figure fleft = map[yPosition][xPosition - 1];
-			Figure fRight = map[yPosition][xPosition + 1];
+            Figure fUp = map[yPosition - 1][xPosition];
+            Figure fDown = map[yPosition + 1][xPosition];
+            Figure fleft = map[yPosition][xPosition - 1];
+            Figure fRight = map[yPosition][xPosition + 1];
 
-			switch (direction) {
-				case PacManLauncher.UP:
-					if (fUp.getClass().getName().compareTo("view.Wall") != 0) {
-						canMove = true;
-					}
-					break;
-				case PacManLauncher.DOWN:
-					if (fDown.getClass().getName().compareTo("view.Wall") != 0) {
-						canMove = true;
-					}
-					break;
-				case PacManLauncher.LEFT:
-					if (fleft.getClass().getName().compareTo("view.Wall") != 0) {
-						canMove = true;
-					}
-					break;
-				case PacManLauncher.RIGHT:
-					if (fRight.getClass().getName().compareTo("view.Wall") != 0) {
-						canMove = true;
-					}
-					break;
-			}
-		}
+            switch (direction) {
+                case PacManLauncher.UP:
+                    if (!(fUp instanceof Wall)) {
+                        canMove = true;
+                    }
+                    break;
+                case PacManLauncher.DOWN:
+                    if (!(fDown instanceof Wall)) {
+                        canMove = true;
+                    }
+                    break;
+                case PacManLauncher.LEFT:
+                    if (!(fleft instanceof Wall)) {
+                        canMove = true;
+                    }
+                    break;
+                case PacManLauncher.RIGHT:
+                    if (!(fRight instanceof Wall)) {
+                        canMove = true;
+                    }
+                    break;
+            }
+        }
 
-		return canMove;
-	}
+        return canMove;
+    }
 
 	@Override
 	public void move(int xMove, int yMove) {
@@ -225,11 +255,13 @@ public class Pacman extends Creature {
 				 * qu'il y avait dedans - Mettre à jour le score - Sachant qu'un food peut être
 				 * un powerup, y a un truc à gérer :)
 				 */
-				food.setFood(null);
-				food.draw();
-				gameMap.pickFood();
 				if (food.isPowerUp()) {
 					this.updateScoreFood();
+					this.isEmpowered= true;
+					
+					
+					
+					
 				}else {
 					this.currentScore += 1;
 				}

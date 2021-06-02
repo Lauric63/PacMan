@@ -124,22 +124,36 @@ abstract class Creature {
 				|| direction.equals(PacManLauncher.LEFT) || direction.equals(PacManLauncher.RIGHT)) {
 			
 			
-			
-			if (direction.equals(PacManLauncher.UP) && (yPosition- speed - width/2 >=0)){ 
+			if (direction.equals(PacManLauncher.UP)) { 
+				if (yPosition- speed <=0) {
+					yMove=heightMap;
+				} else {
 				yMove=  this.checkCollision(PacManLauncher.UP,0,-speed)[1]; 
-				
+				}
 			}
 			
-			if(direction.equals(PacManLauncher.DOWN)  && (yPosition+ speed + width/2 <= heightMap)) {
+			if(direction.equals(PacManLauncher.DOWN)) {
+				if (yPosition+ speed  >=heightMap) {
+					yMove=-heightMap;
+				} else {
 				yMove=  this.checkCollision(PacManLauncher.DOWN,0,speed)[1]; 
-			
+				}
 			}
 			
-			if(direction.equals(PacManLauncher.LEFT)  && (xPosition- speed- width/2 >=0)){
+			if(direction.equals(PacManLauncher.LEFT)){
+				if (xPosition- speed  <=0) {
+					xMove= widthMap;
+				} else {
 				xMove= this.checkCollision(PacManLauncher.LEFT,-speed,0)[0]; 
+				}
 			}
-			if(direction.equals(PacManLauncher.RIGHT) && (xPosition+ speed+ width/2 <= widthMap)) {
+			
+			if(direction.equals(PacManLauncher.RIGHT)) {
+				if (xPosition- speed  >=widthMap) {
+					xMove= -widthMap;
+				} else {				
 				xMove=  this.checkCollision(PacManLauncher.RIGHT,speed,0)[0]; 
+			    }
 			}
 				
 		}
