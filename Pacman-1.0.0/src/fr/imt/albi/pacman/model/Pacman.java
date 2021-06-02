@@ -115,6 +115,7 @@ public class Pacman extends Creature {
 			 * déplacer - garder une trace du dernier déplacement effectué (y a un attribut
 			 * de classe pour ça) - Animer sa bouche ;)
 			 */
+	
 		} else {
 			/*
 			 * TODO Si le déplacement n'est possible, il faut pouvoir récupérer les
@@ -219,6 +220,15 @@ public class Pacman extends Creature {
 				 * qu'il y avait dedans - Mettre à jour le score - Sachant qu'un food peut être
 				 * un powerup, y a un truc à gérer :)
 				 */
+				food.setFood(null);
+				food.draw();
+				gameMap.pickFood();
+				if (food.isPowerUp()) {
+					this.updateScoreFood();
+				}else {
+					this.currentScore += 1;
+				}
+				
 			}
 		}
 	}
