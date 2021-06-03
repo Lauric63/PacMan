@@ -27,7 +27,7 @@ public class Ghost extends Creature {
         this.ghostSkin = new GhostSkin(size, x, y, color);
     }
 
-    public void move() {
+    public void move(Pacman p) {
         if (this.counterFear == 0) {
             this.setNormalState();
         }
