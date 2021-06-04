@@ -14,7 +14,7 @@ public class PacManLauncher {
 	public static final String DOWN = "DOWN";
 	public static final String LEFT = "LEFT";
 	public static final String RIGHT = "RIGHT";
-	private static final int NBR_LVL = 3;
+	private static final int NBR_LVL = 4;
 	private GameMap maps;
 	private final Pacman pacman;
 	private Ghost[] ghost;
@@ -113,7 +113,7 @@ public class PacManLauncher {
 			this.collisionGhost();
 
 			for (Ghost g : this.ghost) {
-				g.move();
+				g.move(this.pacman);
 			}
 			this.collisionGhost();
 			Canvas.getCanvas().redraw(this.pacman.getCurrentScore(), this.pacman.getCurrentLife(), Score.getScore());

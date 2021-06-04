@@ -9,231 +9,350 @@ import java.util.ArrayList;
 
 public class Ghost extends Creature {
 
-    public static final int SPEED_GHOST = 10;
-    public static final int GHOST_SCORE = 100;
-    private final GhostSkin ghostSkin;
-    private final String ghostColor;
-    private String previousMove;
-    private int counterUTurn;
-    private int counterFear;
+	public static final int SPEED_GHOST = 10;
+	public static final int GHOST_SCORE = 100;
+	private final GhostSkin ghostSkin;
+	private final String ghostColor;
+	private String previousMove;
+	private int counterUTurn;
+	private int counterFear;
 
-    public Ghost(int size, int x, int y, String color) {
-        this.previousMove = PacManLauncher.UP;
-        this.initUTurnCounter();
+	public Ghost(int size, int x, int y, String color) {
+		this.previousMove = PacManLauncher.UP;
+		this.initUTurnCounter();
 
-        this.counterFear = 0;
-        this.ghostColor = color;
+		this.counterFear = 0;
+		this.ghostColor = color;
 
-        this.ghostSkin = new GhostSkin(size, x, y, color);
-    }
+		this.ghostSkin = new GhostSkin(size, x, y, color);
+	}
 
-    public void move() {
-        if (this.counterFear == 0) {
-            this.setNormalState();
-        }
-        if (this.counterFear % 2 == 1 || this.counterFear == 0) {
-            if (this.counterFear > 0) {
-                this.counterFear--;
-            }
-            this.counterUTurn--;
-            if (this.counterUTurn == 0) {
-                switch (this.previousMove) {
-                    case PacManLauncher.UP:
-                        this.move(PacManLauncher.DOWN);
-                        break;
-                    case PacManLauncher.DOWN:
-                        this.move(PacManLauncher.UP);
-                        break;
-                    case PacManLauncher.LEFT:
-                        this.move(PacManLauncher.RIGHT);
-                        break;
-                    case PacManLauncher.RIGHT:
-                        this.move(PacManLauncher.LEFT);
-                        break;
-                }
-                this.initUTurnCounter();
-            } else {
-                checkCrossing(this.previousMove);
-            }
-        } else {
-            this.counterFear--;
-        }
-    }
 
-    public void initUTurnCounter() {
-        this.counterUTurn = (int) (Math.random() * 30) + 20;
-    }
+	public void move(Pacman P) {
+		if (this.counterFear == 0) {
+			this.setNormalState();
+		}
+		if (this.counterFear % 2 == 1 || this.counterFear == 0) {
+			if (this.counterFear > 0) {
+				this.counterFear--;
 
-    public void move(String direction) {
-        this.previousMove = direction;
-        int xMove = 0;
-        int yMove = 0;
+			}
 
-        int[] crossMap = this.navigateInMap(direction);
-        xMove = crossMap[0];
-        yMove = crossMap[1];
+			int xpac = P.getX();
+			int ypac = P.getY();
+			int xf = this.getX();
+			int yf = this.getY();
+			double i= 100* Math.random();
+			double distance= Math.sqrt((xpac-xf)^2+(ypac-yf)^2);
 
-        crossMap = this.checkCollision(direction, xMove, yMove);
-        xMove = crossMap[0];
-        yMove = crossMap[1];
 
-        this.move(xMove, yMove);
-    }
 
-    public void move(int dx, int dy) {
-        for (Figure figure : this.getSkin()) {
-            figure.move(dx, dy);
-        }
-    }
+			if (i <50) {
+				this.counterUTurn--;
+				i++;
+				if (this.counterUTurn == 0) {
+					switch (this.previousMove) {
+					case PacManLauncher.UP:
+						this.move(PacManLauncher.DOWN);
+						break;
+					case PacManLauncher.DOWN:
+						this.move(PacManLauncher.UP);
+						break;
+					case PacManLauncher.LEFT:
+						this.move(PacManLauncher.RIGHT);
+						break;
+					case PacManLauncher.RIGHT:
+						this.move(PacManLauncher.LEFT);
+						break;
+					}
+					this.initUTurnCounter();
+				}else {
+					checkCrossing(this.previousMove);
+				}
 
-    private Figure[] getSkin() {
-        return this.ghostSkin.getFigures();
-    }
+			} else {
+				i++;
 
-    public void setFearState() {
-        this.counterFear = 60;
-        Figure[] figures = this.getSkin();
-        for (int i = 0; i < 5; i++) {
-            figures[i].setColor("blue");
-        }
-    }
 
-    public void setNormalState() {
-        this.counterFear = 0;
-        Figure[] figures = this.getSkin();
-        for (int i = 0; i < 5; i++) {
-            figures[i].setColor(this.ghostColor);
-        }
-    }
+				if (this.counterFear == 0) {
+					if (xpac > xf) {
+						this.move(PacManLauncher.RIGHT);
+						if (ypac > yf)   {
+							this.move(PacManLauncher.DOWN);
+						}
+						else if (ypac < yf){
+							this.move(PacManLauncher.UP);  	
+						}
+					}
+					else if (xpac < xf) {
+						this.move(PacManLauncher.LEFT);
+						if (ypac > yf)  {
+							this.move(PacManLauncher.DOWN);
+						}
+						else if (ypac < yf){
+							this.move(PacManLauncher.UP);  	
+						}
+					}   	
+					else {
+						if (ypac > yf)  {
+							this.move(PacManLauncher.DOWN);
+						}
+						else if (ypac < yf) {
+							this.move(PacManLauncher.UP);  	
+						}
+					}
+				}
+				else {
+					if (xpac > xf) {
+						this.move(PacManLauncher.LEFT);
+						if (ypac > yf)   {
+							this.move(PacManLauncher.UP);
+						}
+						else if (ypac < yf){
+							this.move(PacManLauncher.DOWN);  	
+						}
+					}
+					else if (xpac < xf) {
+						this.move(PacManLauncher.RIGHT);
+						if (ypac > yf)  {
+							this.move(PacManLauncher.UP);
+						}
+						else if (ypac < yf){
+							this.move(PacManLauncher.DOWN);  	
+						}
+					}   	
+					else {
+						if (ypac > yf)  {
+							this.move(PacManLauncher.UP);
+						}
+						else if (ypac < yf) {
+							this.move(PacManLauncher.DOWN);  	
+						}
+					}
+				}
+			}
 
-    public int getX() {
-        return this.ghostSkin.getX();
-    }
+		}
+		else {
+			this.counterFear--;
+		}
+	}
 
-    public int getY() {
-        return this.ghostSkin.getY();
-    }
+	public void initUTurnCounter() {
+		this.counterUTurn = (int) (Math.random() * 30) + 20;
+	}
 
-    public int getWidth() {
-        return this.ghostSkin.getWidth();
-    }
+	public void move(String direction) {
+		this.previousMove = direction;
+		int xMove = 0;
+		int yMove = 0;
 
-    public int getSpeed() {
-        return Ghost.SPEED_GHOST;
-    }
+		int[] crossMap = this.navigateInMap(direction);
+		xMove = crossMap[0];
+		yMove = crossMap[1];
 
-    public int getFearCounter() {
-        return this.counterFear;
-    }
+		crossMap = this.checkCollision(direction, xMove, yMove);
+		xMove = crossMap[0];
+		yMove = crossMap[1];
 
-    public void checkCrossing(String toward) {
-        boolean haveMoved = false;
-        Figure[][] map = this.gameMap.getMap();
+		this.move(xMove, yMove);
+	}
 
-        if (this.getX() % this.gameMap.getSizeCase() == 0 && this.getY() % this.gameMap.getSizeCase() == 0) {
-            int[] position = this.getColumnAndRow();
-            int xPos = position[0];
-            int yPos = position[1];
+	private boolean isMovePossibleGhost(String direction) {
+		boolean canMove = false;
+		Figure[][] map = this.gameMap.getMap();
 
-            Figure fUp = map[yPos - 1][xPos];
-            Figure fDown = map[yPos + 1][xPos];
-            Figure fLeft = map[yPos][xPos - 1];
-            Figure fRight = map[yPos][xPos + 1];
+		if (this.getX() % this.gameMap.getSizeCase() == 0 && this.getY() % this.gameMap.getSizeCase() == 0) {
+			int[] position = this.getColumnAndRow();
+			int xPosition = position[0];
+			int yPosition = position[1];
 
-            ArrayList<Figure> caseAround = new ArrayList<Figure>();
-            caseAround.add(fUp);
-            caseAround.add(fDown);
-            caseAround.add(fLeft);
-            caseAround.add(fRight);
+			Figure fUp = map[yPosition - 1][xPosition];
+			Figure fDown = map[yPosition + 1][xPosition];
+			Figure fleft = map[yPosition][xPosition - 1];
+			Figure fRight = map[yPosition][xPosition + 1];
 
-            switch (toward) {
-                case PacManLauncher.UP:
-                    if (fLeft.getClass().getName().compareTo("view.Wall") != 0 || fRight.getClass().getName().compareTo("view.Wall") != 0) {
-                        caseAround.remove(fDown);
-                        this.chooseMove(toward, caseAround, fUp, fDown, fLeft, fRight);
-                        haveMoved = true;
-                    } else if (fUp.getClass().getName().compareTo("view.Wall") == 0) {
-                        this.chooseMove(toward, caseAround, fUp, fDown, fLeft, fRight);
-                        haveMoved = true;
-                    }
-                    break;
-                case PacManLauncher.DOWN:
-                    if (fLeft.getClass().getName().compareTo("view.Wall") != 0 || fRight.getClass().getName().compareTo("view.Wall") != 0) {
-                        caseAround.remove(fUp);
-                        this.chooseMove(toward, caseAround, fUp, fDown, fLeft, fRight);
-                        haveMoved = true;
-                    } else if (fDown.getClass().getName().compareTo("view.Wall") == 0) {
-                        this.chooseMove(toward, caseAround, fUp, fDown, fLeft, fRight);
-                        haveMoved = true;
-                    }
-                    break;
-                case PacManLauncher.LEFT:
-                    if (fUp.getClass().getName().compareTo("view.Wall") != 0 || fDown.getClass().getName().compareTo("view.Wall") != 0) {
-                        caseAround.remove(fRight);
-                        this.chooseMove(toward, caseAround, fUp, fDown, fLeft, fRight);
-                        haveMoved = true;
-                    } else if (fLeft.getClass().getName().compareTo("view.Wall") == 0) {
-                        this.chooseMove(toward, caseAround, fUp, fDown, fLeft, fRight);
-                        haveMoved = true;
-                    }
-                    break;
-                case PacManLauncher.RIGHT:
-                    if (fUp.getClass().getName().compareTo("view.Wall") != 0 || fDown.getClass().getName().compareTo("view.Wall") != 0) {
-                        caseAround.remove(fLeft);
-                        this.chooseMove(toward, caseAround, fUp, fDown, fLeft, fRight);
-                        haveMoved = true;
-                    } else if (fRight.getClass().getName().compareTo("view.Wall") == 0) {
-                        this.chooseMove(toward, caseAround, fUp, fDown, fLeft, fRight);
-                        haveMoved = true;
-                    }
-                    break;
-            }
-        }
+			switch (direction) {
+			case PacManLauncher.UP:
+				if (!(fUp instanceof Wall)) {
+					canMove = true;
+				}
+				break;
+			case PacManLauncher.DOWN:
+				if (!(fDown instanceof Wall)) {
+					canMove = true;
+				}
+				break;
+			case PacManLauncher.LEFT:
+				if (!(fleft instanceof Wall)) {
+					canMove = true;
+				}
+				break;
+			case PacManLauncher.RIGHT:
+				if (!(fRight instanceof Wall)) {
+					canMove = true;
+				}
+				break;
+			}
+		}
 
-        if (!haveMoved) {
-            this.move(this.previousMove);
-        }
-    }
+		return canMove;
+	}
 
-    public void chooseMove(String toward, ArrayList<Figure> listF, Figure fUp, Figure fDown, Figure fLeft, Figure fRight) {
-        boolean result = false;
-        ArrayList<Figure> toGo = new ArrayList<Figure>();
+	public void move(int dx, int dy) {
+		for (Figure figure : this.getSkin()) {
+			figure.move(dx, dy);
+		}
+	}
 
-        for (Figure f : listF) {
-            if (f.getClass().getName().compareTo("view.Wall") != 0) {
-                toGo.add(f);
-            }
-        }
+	private Figure[] getSkin() {
+		return this.ghostSkin.getFigures();
+	}
 
-        Figure nextMove = null;
-        double ran = Math.random() * toGo.size();
-        for (int i = 0; i < toGo.size(); i++) {
-            if (ran >= i && ran < i + 1) {
-                nextMove = toGo.get(i);
-            }
-        }
+	public void setFearState() {
+		this.counterFear = 60;
+		Figure[] figures = this.getSkin();
+		for (int i = 0; i < 5; i++) {
+			figures[i].setColor("blue");
+		}
+	}
 
-        if (nextMove == null) {
-            this.move(toward);
-        } else if (nextMove == fUp) {
-            this.move(PacManLauncher.UP);
-        } else if (nextMove == fDown) {
-            this.move(PacManLauncher.DOWN);
-        } else if (nextMove == fLeft) {
-            this.move(PacManLauncher.LEFT);
-        } else if (nextMove == fRight) {
-            this.move(PacManLauncher.RIGHT);
-        }
-    }
+	public void setNormalState() {
+		this.counterFear = 0;
+		Figure[] figures = this.getSkin();
+		for (int i = 0; i < 5; i++) {
+			figures[i].setColor(this.ghostColor);
+		}
+	}
 
-    public boolean checkCaseType(Figure f) {
-        return (f instanceof Wall);
-    }
+	public int getX() {
+		return this.ghostSkin.getX();
+	}
 
-    protected void interactWithFood(Figure[][] map, int i, int j) {
-    }
+	public int getY() {
+		return this.ghostSkin.getY();
+	}
 
-    public void draw() {
-        this.ghostSkin.draw();
-    }
+	public int getWidth() {
+		return this.ghostSkin.getWidth();
+	}
+
+	public int getSpeed() {
+		return Ghost.SPEED_GHOST;
+	}
+
+	public int getFearCounter() {
+		return this.counterFear;
+	}
+
+	public void checkCrossing(String toward) {
+		boolean haveMoved = false;
+		Figure[][] map = this.gameMap.getMap();
+
+		if (this.getX() % this.gameMap.getSizeCase() == 0 && this.getY() % this.gameMap.getSizeCase() == 0) {
+			int[] position = this.getColumnAndRow();
+			int xPos = position[0];
+			int yPos = position[1];
+
+			Figure fUp = map[yPos - 1][xPos];
+			Figure fDown = map[yPos + 1][xPos];
+			Figure fLeft = map[yPos][xPos - 1];
+			Figure fRight = map[yPos][xPos + 1];
+
+			ArrayList<Figure> caseAround = new ArrayList<Figure>();
+			caseAround.add(fUp);
+			caseAround.add(fDown);
+			caseAround.add(fLeft);
+			caseAround.add(fRight);
+
+			switch (toward) {
+			case PacManLauncher.UP:
+				if (fLeft.getClass().getName().compareTo("view.Wall") != 0 || fRight.getClass().getName().compareTo("view.Wall") != 0) {
+					caseAround.remove(fDown);
+					this.chooseMove(toward, caseAround, fUp, fDown, fLeft, fRight);
+					haveMoved = true;
+				} else if (fUp.getClass().getName().compareTo("view.Wall") == 0) {
+					this.chooseMove(toward, caseAround, fUp, fDown, fLeft, fRight);
+					haveMoved = true;
+				}
+				break;
+			case PacManLauncher.DOWN:
+				if (fLeft.getClass().getName().compareTo("view.Wall") != 0 || fRight.getClass().getName().compareTo("view.Wall") != 0) {
+					caseAround.remove(fUp);
+					this.chooseMove(toward, caseAround, fUp, fDown, fLeft, fRight);
+					haveMoved = true;
+				} else if (fDown.getClass().getName().compareTo("view.Wall") == 0) {
+					this.chooseMove(toward, caseAround, fUp, fDown, fLeft, fRight);
+					haveMoved = true;
+				}
+				break;
+			case PacManLauncher.LEFT:
+				if (fUp.getClass().getName().compareTo("view.Wall") != 0 || fDown.getClass().getName().compareTo("view.Wall") != 0) {
+					caseAround.remove(fRight);
+					this.chooseMove(toward, caseAround, fUp, fDown, fLeft, fRight);
+					haveMoved = true;
+				} else if (fLeft.getClass().getName().compareTo("view.Wall") == 0) {
+					this.chooseMove(toward, caseAround, fUp, fDown, fLeft, fRight);
+					haveMoved = true;
+				}
+				break;
+			case PacManLauncher.RIGHT:
+				if (fUp.getClass().getName().compareTo("view.Wall") != 0 || fDown.getClass().getName().compareTo("view.Wall") != 0) {
+					caseAround.remove(fLeft);
+					this.chooseMove(toward, caseAround, fUp, fDown, fLeft, fRight);
+					haveMoved = true;
+				} else if (fRight.getClass().getName().compareTo("view.Wall") == 0) {
+					this.chooseMove(toward, caseAround, fUp, fDown, fLeft, fRight);
+					haveMoved = true;
+				}
+				break;
+			}
+		}
+
+		if (!haveMoved) {
+			this.move(this.previousMove);
+		}
+	}
+
+	public void chooseMove(String toward, ArrayList<Figure> listF, Figure fUp, Figure fDown, Figure fLeft, Figure fRight) {
+		boolean result = false;
+		ArrayList<Figure> toGo = new ArrayList<Figure>();
+
+		for (Figure f : listF) {
+			if (!(f instanceof Wall)) {
+				toGo.add(f);
+			}
+		}
+
+		Figure nextMove = null;
+		double ran = Math.random() * toGo.size();
+		for (int i = 0; i < toGo.size(); i++) {
+			if (ran >= i && ran < i + 1) {
+				nextMove = toGo.get(i);
+			}
+		}
+
+		if (nextMove == null) {
+			this.move(toward);
+		} else if (nextMove == fUp) {
+			this.move(PacManLauncher.UP);
+		} else if (nextMove == fDown) {
+			this.move(PacManLauncher.DOWN);
+		} else if (nextMove == fLeft) {
+			this.move(PacManLauncher.LEFT);
+		} else if (nextMove == fRight) {
+			this.move(PacManLauncher.RIGHT);
+		}
+	}
+
+	public boolean checkCaseType(Figure f) {
+		return (f instanceof Wall);
+	}
+
+	protected void interactWithFood(Figure[][] map, int i, int j) {
+	}
+
+	public void draw() {
+		this.ghostSkin.draw();
+	}
 }

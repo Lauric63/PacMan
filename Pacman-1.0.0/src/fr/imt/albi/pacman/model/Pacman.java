@@ -149,7 +149,8 @@ public class Pacman extends Creature {
 			/*
 			 * TODO Si le déplacement n'est possible, il faut pouvoir récupérer les
 			 * coordonnées en partant du principe que sa direction sera égale à la dernière
-			 * direction qui avait marché. Quasiment la même chose, juste que ça sera pas
+			 * direction qui avait marché.Ouai oaui 
+			 *  Quasiment la même chose, juste que ça sera pas
 			 * direction qui sera utilisé, mais autre chose :) Faut toujours animer sa
 			 * bouche ceci dit !
 			 */
