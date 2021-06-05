@@ -141,7 +141,7 @@ abstract class Creature {
 			}
 			
 			if(direction.equals(PacManLauncher.LEFT)){
-				if (xPosition- speed  <=0) {
+				if (xPosition- speed <=-3) {
 					xMove= widthMap;
 				} else {
 				xMove= this.checkCollision(PacManLauncher.LEFT,-speed,0)[0]; 
